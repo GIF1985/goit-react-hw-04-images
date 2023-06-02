@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import MyLoader from '../Loader/Loader.jsx';
@@ -9,16 +9,22 @@ const ImageGallery = ({
   children = null,
   isLoading = false,
 }) => {
-  return (
-    <ul className="ImageGallery">
-      {images.map(image => (
+  const galleryItems = useMemo(
+    () =>
+      images.map(image => (
         <ImageGalleryItem
           key={image.id}
           webformatURL={image.webformatURL}
           tags={image.tags}
           onClick={() => onImageClick(image.id)}
         />
-      ))}
+      )),
+    [images, onImageClick]
+  );
+
+  return (
+    <ul className="ImageGallery">
+      {galleryItems}
       {children}
       {isLoading && <MyLoader />}
     </ul>

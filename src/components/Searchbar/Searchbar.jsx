@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 const Searchbar = ({ onSubmit }) => {
+  const searchInputRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const handleChange = event => {
-    setSearchQuery(event.target.value);
-  };
 
   const handleSubmit = event => {
     event.preventDefault();
     onSubmit(searchQuery.trim());
     setSearchQuery('');
+    searchInputRef.current.focus();
   };
 
   return (
@@ -28,7 +26,8 @@ const Searchbar = ({ onSubmit }) => {
           autoFocus
           placeholder="Search images and photos"
           value={searchQuery}
-          onChange={handleChange}
+          onChange={event => setSearchQuery(event.target.value)}
+          ref={searchInputRef}
         />
       </form>
     </header>

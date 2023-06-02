@@ -24,22 +24,24 @@ const App = ({ API_KEY }) => {
   };
 
   useEffect(() => {
-    if (!searchQuery) {
-      return;
-    }
+    const fetchImages = async () => {
+      if (!searchQuery) {
+        return;
+      }
 
-    setIsLoading(true);
+      setIsLoading(true);
 
-    fetch(
-      `https://pixabay.com/api/?q=${searchQuery}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-    )
-      .then(response => {
+      try {
+        const response = await fetch(
+          `https://pixabay.com/api/?q=${searchQuery}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
+        );
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        return response.json();
-      })
-      .then(data => {
+
+        const data = await response.json();
+
         setTotalHits(data.totalHits || 0);
 
         if (data.hits.length === 0) {
@@ -51,15 +53,16 @@ const App = ({ API_KEY }) => {
         } else {
           setImages(prevImages => [...prevImages, ...data.hits]);
         }
-      })
-      .catch(error => {
+      } catch (error) {
         setError(error.message);
-      })
-      .finally(() => {
+      } finally {
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
-      });
+      }
+    };
+
+    fetchImages();
   }, [searchQuery, page, API_KEY]);
 
   const handleImageClick = id => {
